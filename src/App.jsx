@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef,  useState } from "react";
 
 import "./App.css";
 
@@ -7,6 +7,8 @@ function App() {
   const [length, setLength] = useState(8);
   const [numbersAllowed, setNumbersAllowed] = useState(false);
   const [characterAllowed, setCharacterAllowed] = useState(false);
+   
+  const passwordReference = useRef(null)
 
   const passwordGenerator = useCallback(()=>{
     let pass = "";
@@ -27,6 +29,12 @@ function App() {
       setPassword(pass)
   },[length, numbersAllowed,  characterAllowed, setPassword ]) 
 
+  const copyToClipboard  = useCallback(() =>{
+    passwordReference.current?.select();
+    passwordReference.current?.setSelectionRange(0,99);
+    window.navigator.clipboard.writeText(password)
+  }, [password])
+
 
   useEffect(() =>{
     passwordGenerator()
@@ -44,12 +52,15 @@ function App() {
           <div className="input flex flex-col items-center">
             <input
               className=" w-full outline-none bg-white text-gray-900 rounded-xl px-4 py-1"
+           
               type="text"
               value={password}
               placeholder="password"
               readOnly
+              ref={passwordReference}
             />
-            <button className=" my-2 ml-15  px-3 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md h    over:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 shr ">
+            <button className=" my-2 ml-15  px-3 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md h    over:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 shr "
+               onClick={copyToClipboard}>
               Copy
             </button>
           </div>
